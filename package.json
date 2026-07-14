@@ -14,10 +14,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sabikneta/sabik-datagrid.git"
+    "url": "git+https://github.com/sabiknetasn/sabik-datagrid.git"
   },
   "bugs": {
-    "url": "https://github.com/sabikneta/sabik-datagrid/issues"
+    "url": "https://github.com/sabiknetasn/sabik-datagrid/issues"
   },
   "homepage": "https://www.npmjs.com/package/sabik-datagrid",
   "engines": {

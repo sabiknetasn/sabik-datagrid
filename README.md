@@ -67,31 +67,31 @@ Captured from the local showcase at **1440×900** (2× device scale). Regenerate
 
 ### Products
 
-![Products](docs/images/products.png)
+![Products](https://raw.githubusercontent.com/sabiknetasn/sabik-datagrid/main/docs/images/products.png)
 
 ### Employees
 
-![Employees](docs/images/employees.png)
+![Employees](https://raw.githubusercontent.com/sabiknetasn/sabik-datagrid/main/docs/images/employees.png)
 
 ### Admin Dashboard
 
-![Admin Dashboard](docs/images/admin.png)
+![Admin Dashboard](https://raw.githubusercontent.com/sabiknetasn/sabik-datagrid/main/docs/images/admin.png)
 
 ### Dark Theme
 
-![Dark Theme](docs/images/dark.png)
+![Dark Theme](https://raw.githubusercontent.com/sabiknetasn/sabik-datagrid/main/docs/images/dark.png)
 
 ### Column Resize
 
-![Column Resize](docs/images/column-resize.png)
+![Column Resize](https://raw.githubusercontent.com/sabiknetasn/sabik-datagrid/main/docs/images/column-resize.png)
 
 ### Column Reorder
 
-![Column Reorder](docs/images/column-reorder.png)
+![Column Reorder](https://raw.githubusercontent.com/sabiknetasn/sabik-datagrid/main/docs/images/column-reorder.png)
 
 ### Column Pinning
 
-![Column Pinning](docs/images/column-pinning.png)
+![Column Pinning](https://raw.githubusercontent.com/sabiknetasn/sabik-datagrid/main/docs/images/column-pinning.png)
 
 ---
 
@@ -853,7 +853,7 @@ Ship status for the public surface:
 - [ ] Aggregation
 - [ ] Pivot Tables
 
-Contributions and feature requests are welcome via [GitHub Issues](https://github.com/sabikneta/sabik-datagrid/issues).
+Contributions and feature requests are welcome via [GitHub Issues](https://github.com/sabiknetasn/sabik-datagrid/issues).
 
 ---
 
