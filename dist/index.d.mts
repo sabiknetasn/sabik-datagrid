@@ -1,5 +1,6 @@
-import React$1, { ReactNode, CSSProperties } from 'react';
-import { ColumnDef, RowSelectionState, SortingState, ColumnFiltersState, PaginationState, Table, VisibilityState } from '@tanstack/react-table';
+import * as react from 'react';
+import { ReactNode, CSSProperties } from 'react';
+import { ColumnDef, RowSelectionState, SortingState, ColumnFiltersState, PaginationState, VisibilityState } from '@tanstack/react-table';
 
 type Density = 'compact' | 'comfortable' | 'spacious';
 type RowPaddingPreset = 'compact' | 'comfortable' | 'spacious';
@@ -15,7 +16,7 @@ interface DataGridThemeTokens {
     border?: string;
     radius?: string;
 }
-/** @deprecated Use DataGridThemeTokens via the `theme` prop */
+/** @deprecated Use `DataGridThemeTokens` via the `theme` prop. */
 interface DataGridTheme {
     light: string;
     dark: string;
@@ -29,51 +30,22 @@ interface DataGridAppearance {
 }
 interface RowAction<TData> {
     label: string;
-    icon?: React.ReactNode;
+    icon?: ReactNode;
     onClick: (row: TData) => void;
     danger?: boolean;
     disabled?: boolean;
 }
-type DataGridColumnDef<TData> = ColumnDef<TData> & {
-    id?: string;
-    header?: string | ReactNode;
-    cell?: (props: {
-        row: {
-            original: TData;
-        };
-        getValue: () => unknown;
-    }) => ReactNode;
-    footer?: string | ReactNode;
-    minSize?: number;
-    maxSize?: number;
-    size?: number;
-    pin?: 'left' | 'right';
+/**
+ * Column definition based on TanStack ColumnDef.
+ * Extra fields control DataGrid filtering/sorting behavior.
+ * Do not redeclare `cell`/`header` — that breaks TypeScript inference.
+ */
+type DataGridColumnDef<TData, TValue = unknown> = ColumnDef<TData, TValue> & {
     sortable?: boolean;
     filterable?: boolean;
     filterType?: ColumnFilterType;
-    visible?: boolean;
-    editable?: boolean;
 };
-interface DataGridPaginationProps {
-    pageIndex: number;
-    pageSize: number;
-    pageCount: number;
-    onPaginationChange: (state: PaginationState) => void;
-    manual?: boolean;
-}
-interface DataGridFilterProps {
-    columnFilters: ColumnFiltersState;
-    globalFilter: string;
-    onColumnFiltersChange: (state: ColumnFiltersState) => void;
-    onGlobalFilterChange: (value: string) => void;
-    manual?: boolean;
-}
-interface DataGridSelectionProps {
-    rowSelection: RowSelectionState;
-    onRowSelectionChange: (state: RowSelectionState) => void;
-    selectable?: boolean;
-}
-interface DataGridState<TData> {
+interface DataGridState {
     sorting: SortingState;
     columnFilters: ColumnFiltersState;
     globalFilter: string;
@@ -81,8 +53,8 @@ interface DataGridState<TData> {
     rowSelection: RowSelectionState;
     pagination: PaginationState;
 }
-interface DataGridContextValue<TData> {
-    state: DataGridState<TData>;
+interface DataGridContextValue {
+    state: DataGridState;
     setSorting: (sorting: SortingState) => void;
     setColumnFilters: (filters: ColumnFiltersState) => void;
     setGlobalFilter: (filter: string) => void;
@@ -110,6 +82,8 @@ interface DataGridProps<TData> {
     toolbar?: boolean;
     stickyHeader?: boolean;
     virtualized?: boolean;
+    /** Scroll viewport height in px when `virtualized` is enabled (default 400). */
+    virtualHeight?: number;
     persistenceKey?: string;
     striped?: boolean;
     hoverable?: boolean;
@@ -117,13 +91,9 @@ interface DataGridProps<TData> {
     rowPadding?: RowPadding;
     rowHeight?: number;
     theme?: DataGridThemeTokens;
-    /** Accessible name for the grid (applied to the table element). */
     ariaLabel?: string;
-    /** Stable row identity — recommended for selection and refetch scenarios. */
     getRowId?: (originalRow: TData, index: number) => string;
-    /** Total page count when using `manualPagination` (server-driven). */
     pageCount?: number;
-    /** Total row count when using `manualPagination` (server-driven). */
     rowCount?: number;
     rowActions?: RowAction<TData>[];
     bulkActions?: RowAction<TData>[];
@@ -137,14 +107,10 @@ interface DataGridProps<TData> {
     onSortChange?: (sorting: SortingState) => void;
     onFilterChange?: (filters: ColumnFiltersState, globalFilter: string) => void;
     onPaginationChange?: (pagination: PaginationState) => void;
-    onRefresh?: () => void;
     onExport?: (type: 'csv' | 'excel' | 'print') => void;
-    renderToolbar?: (props: {
-        table: Table<TData>;
-    }) => ReactNode;
     className?: string;
 }
 
-declare function DataGrid<TData>({ density, rowPadding, rowHeight, striped, hoverable, theme, persistenceKey, ...props }: DataGridProps<TData>): React$1.JSX.Element;
+declare function DataGrid<TData>({ density, rowPadding, rowHeight, striped, hoverable, theme, persistenceKey, ...props }: DataGridProps<TData>): react.JSX.Element;
 
-export { type ColumnFilterType, DataGrid, type DataGridAppearance, type DataGridColumnDef, type DataGridContextValue, type DataGridFilterProps, type DataGridPaginationProps, type DataGridProps, type DataGridSelectionProps, type DataGridState, type DataGridTheme, type DataGridThemeTokens, type Density, type RowAction, type RowPadding, type RowPaddingPreset };
+export { type ColumnFilterType, DataGrid, type DataGridAppearance, type DataGridColumnDef, type DataGridContextValue, type DataGridProps, type DataGridState, type DataGridTheme, type DataGridThemeTokens, type Density, type RowAction, type RowPadding, type RowPaddingPreset };
