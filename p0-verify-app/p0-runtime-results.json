@@ -1,8 +1,0 @@
-{
-  "1_styling": "PASS",
-  "2_virtualization": "FAIL probe100={\"debug\":\"mounted:100\",\"roleRows\":0,\"tbodyChildren\":0} probe100k={\"timeout\":true}",
-  "3_rowActions": "PASS",
-  "4_bulkActions": "PASS",
-  "5_export": "PASS",
-  "6_persistence": "PASS"
-}
