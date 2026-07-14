@@ -1,0 +1,16 @@
+{
+  "1_theme": "PASS",
+  "2_density-compact": "PASS",
+  "2_density-comfortable": "PASS",
+  "2_density-spacious": "PASS",
+  "2_density_order": "PASS",
+  "3_padding_string": "PASS",
+  "3_padding_object": "PASS",
+  "4_rowHeight_normal": "PASS",
+  "4_rowHeight_virtual": "PASS",
+  "5_column_filters": "PASS",
+  "6_striped": "PASS",
+  "7_hoverable": "PASS",
+  "8_stickyHeader": "PASS",
+  "9_virtualization_100k": "PASS"
+}
