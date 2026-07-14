@@ -4,6 +4,7 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import { DATAGRID_CONSTANTS, resolveRowHeight } from './constants';
 import { useDataGridContext } from './DataGridProvider';
 import { buildRowClassName } from './utils/rowClassName';
+import { getColumnPinningStyle } from './utils/columnLayout';
 
 interface DataGridBodyVirtualProps<TData> {
   table: Table<TData>;
@@ -68,17 +69,23 @@ export function DataGridBodyVirtual<TData>({
             aria-selected={selectable ? row.getIsSelected() : undefined}
             style={{ ...rowStyle, height: `${virtualRow.size}px` }}
           >
-            {row.getVisibleCells().map((cell) => (
-              <td
-                key={cell.id}
-                className={`sdg__td ${densityClass}${
-                  cell.column.id === 'row-actions' ? ' sdg__td--actions' : ''
-                }`}
-                style={{ width: cell.column.getSize() }}
-              >
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </td>
-            ))}
+            {row.getVisibleCells().map((cell) => {
+              const pinned = cell.column.getIsPinned();
+              return (
+                <td
+                  key={cell.id}
+                  className={`sdg__td ${densityClass}${
+                    cell.column.id === 'row-actions' ? ' sdg__td--actions' : ''
+                  }${pinned ? ` sdg__td--pinned-${pinned}` : ''}`}
+                  style={{
+                    width: cell.column.getSize(),
+                    ...getColumnPinningStyle(cell.column),
+                  }}
+                >
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
+              );
+            })}
           </tr>
         );
       })}

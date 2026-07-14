@@ -4,15 +4,34 @@ Enterprise-ready **React + TypeScript DataGrid** built on [TanStack Table](https
 
 Sort, filter, paginate, select rows, theme the UI, and render custom cells — without bringing your own table infrastructure.
 
-[![npm version](https://img.shields.io/npm/v/sabik-datagrid.svg)](https://www.npmjs.com/package/sabik-datagrid)
-[![license](https://img.shields.io/npm/l/sabik-datagrid.svg)](./LICENSE)
-[![peer](https://img.shields.io/badge/peer-react%20%3E%3D%2018-61dafb)](https://react.dev)
+## Live Demo
 
----
+**Try it in the browser:**  
+[https://agent-6a5662a09d0a830e71067b1d--sabikdatagrid.netlify.app/](https://agent-6a5662a09d0a830e71067b1d--sabikdatagrid.netlify.app/)
 
-## Demos
+[![npm version](https://img.shields.io/npm/v/sabik-datagrid.svg?style=flat-square)](https://www.npmjs.com/package/sabik-datagrid)
+[![Live Demo](https://img.shields.io/badge/demo-live-00C7B7?style=flat-square&logo=netlify&logoColor=white)](https://agent-6a5662a09d0a830e71067b1d--sabikdatagrid.netlify.app/)
+[![license](https://img.shields.io/npm/l/sabik-datagrid.svg?style=flat-square)](./LICENSE)
+[![peer](https://img.shields.io/badge/peer-react%20%3E%3D%2018-61dafb?style=flat-square)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-ready-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 
-A full documentation showcase lives in [`consumer-app`](./consumer-app):
+Explore the hosted showcase:
+
+| Demo | Link |
+| --- | --- |
+| Interactive Showcase | [Open](https://agent-6a5662a09d0a830e71067b1d--sabikdatagrid.netlify.app/) |
+| Products Demo | [Open](https://agent-6a5662a09d0a830e71067b1d--sabikdatagrid.netlify.app/products) |
+| Employees Demo | [Open](https://agent-6a5662a09d0a830e71067b1d--sabikdatagrid.netlify.app/employees) |
+| Admin Demo | [Open](https://agent-6a5662a09d0a830e71067b1d--sabikdatagrid.netlify.app/admin) |
+| Column Resize | [Products → resize](https://agent-6a5662a09d0a830e71067b1d--sabikdatagrid.netlify.app/products) |
+| Column Reorder | [Products → reorder](https://agent-6a5662a09d0a830e71067b1d--sabikdatagrid.netlify.app/products) |
+| Column Pinning | [Products → pin](https://agent-6a5662a09d0a830e71067b1d--sabikdatagrid.netlify.app/products) |
+| Virtualization | [Docs](#virtualization) · [Showcase](https://agent-6a5662a09d0a830e71067b1d--sabikdatagrid.netlify.app/) |
+| Themes | [Admin → theme](https://agent-6a5662a09d0a830e71067b1d--sabikdatagrid.netlify.app/admin) |
+
+### Local showcase
+
+A full documentation showcase also lives in [`consumer-app`](./consumer-app):
 
 ```bash
 npm run build && npm pack
@@ -23,15 +42,72 @@ npm run dev
 
 Run Playwright checks with `npm run test:e2e` inside `consumer-app`.
 
+Regenerate README screenshots with `npm run capture:docs` (writes to `../docs/images`).
+
+---
+
+## Why sabik-datagrid?
+
+| | |
+| --- | --- |
+| **Lightweight** | Lean bundle with React / TanStack / `@dnd-kit` as peers or externals — you own your React copy. |
+| **TypeScript-first** | First-class exported types for props, columns, themes, density, and actions. |
+| **Built on TanStack Table** | Industry-standard headless table engine, plus optional TanStack Virtual for large lists. |
+| **Production-ready** | Sorting, filtering, pagination, selection, persistence, column layout, and a11y-minded markup. |
+| **Fully customizable** | Theme tokens, density, custom cells, row/bulk actions, and CSS variables you can override. |
+| **React 18 / 19 compatible** | Peer range `react` / `react-dom` `>= 18`. |
+| **No Tailwind dependency** | Self-contained stylesheet — drop in and go. |
+| **Modern enterprise UI** | Polished toolbar, filter row, sticky header, menus, and pagination inspired by AG Grid, MUI X, and Linear. |
+
+---
+
+## Screenshots
+
+Captured from the local showcase at **1440×900** (2× device scale). Regenerate with `npm run capture:docs` inside `consumer-app`.
+
+### Products
+
+![Products](docs/images/products.png)
+
+### Employees
+
+![Employees](docs/images/employees.png)
+
+### Admin Dashboard
+
+![Admin Dashboard](docs/images/admin.png)
+
+### Dark Theme
+
+![Dark Theme](docs/images/dark.png)
+
+### Column Resize
+
+![Column Resize](docs/images/column-resize.png)
+
+### Column Reorder
+
+![Column Reorder](docs/images/column-reorder.png)
+
+### Column Pinning
+
+![Column Pinning](docs/images/column-pinning.png)
+
 ---
 
 ## Table of contents
 
+- [Live Demo](#live-demo)
+- [Why sabik-datagrid?](#why-sabik-datagrid)
+- [Screenshots](#screenshots)
 - [Features](#features)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
 - [Props](#props)
 - [Column configuration](#column-configuration)
+- [Column resizing](#column-resizing)
+- [Column reordering](#column-reordering)
+- [Column pinning](#column-pinning)
 - [Sorting](#sorting)
 - [Filtering](#filtering)
 - [Pagination](#pagination)
@@ -47,6 +123,7 @@ Run Playwright checks with `npm run test:e2e` inside `consumer-app`.
 - [FAQ](#faq)
 - [Troubleshooting](#troubleshooting)
 - [TypeScript](#typescript)
+- [Roadmap](#roadmap)
 - [License](#license)
 
 ---
@@ -56,10 +133,11 @@ Run Playwright checks with `npm run test:e2e` inside `consumer-app`.
 | Area | Capabilities |
 | --- | --- |
 | Data ops | Client-side sorting, column filters, global search, pagination |
-| Interaction | Row selection, row click/double-click, row menus, bulk actions |
-| Appearance | Theme tokens, density, row padding/height, striped & hoverable rows, sticky header |
+| Interaction | Row selection, row click / double-click, row menus, bulk actions |
+| Appearance | Theme tokens, density, row padding / height, striped & hoverable rows, sticky header |
 | UX states | Loading skeleton / soft overlay, empty state, error state |
 | Scale | Optional row virtualization |
+| Layout | Column resize, reorder (`@dnd-kit`), and left / right pinning |
 | Tooling | Toolbar, column visibility menu, export callback, LocalStorage persistence |
 | DX | Full TypeScript types, self-contained CSS (no Tailwind required) |
 
@@ -153,9 +231,11 @@ export function UsersTable() {
 | `exportable` | `boolean` | `false` | Export button; fires `onExport` |
 | `toolbar` | `boolean` | `false` | Shows toolbar (search, columns, export, reset) |
 | `stickyHeader` | `boolean` | `false` | Sticky header inside the scroll container |
+| `resizable` | `boolean` | `true` | Column resize handles (TanStack sizing) |
+| `reorderable` | `boolean` | `false` | Drag-and-drop column reorder (`@dnd-kit`) |
 | `virtualized` | `boolean` | `false` | Row virtualization (forces manual pagination mode) |
 | `virtualHeight` | `number` | `400` | Virtual scrollport height in px |
-| `persistenceKey` | `string` | — | Scoped LocalStorage key for grid UI state |
+| `persistenceKey` | `string` | — | Scoped LocalStorage key (includes order / size / pin) |
 | `striped` | `boolean` | `false` | Zebra striping |
 | `hoverable` | `boolean` | `false` | Row hover highlight |
 
@@ -204,13 +284,14 @@ export function UsersTable() {
 | `onSortChange` | `(sorting) => void` | Sorting changed |
 | `onFilterChange` | `(filters, globalFilter) => void` | Column filters / search changed |
 | `onPaginationChange` | `(pagination) => void` | Page index / size changed |
+| `onColumnOrderChange` | `(order) => void` | Column order changed |
+| `onColumnSizingChange` | `(sizing) => void` | Column sizes changed |
+| `onColumnPinningChange` | `(pinning) => void` | Column pin state changed |
 | `onExport` | `(type) => void` | Export button clicked (`'csv' \| 'excel' \| 'print'`) |
 
 ### Typed but not implemented yet / removed
 
-Former stubs `pin`, `editable`, `visible` (column), `onRefresh`, and `renderToolbar` were removed from the public API until implemented.
-
-Use `virtualHeight` to size the virtualized scrollport.
+Former stubs `editable`, `visible`, `onRefresh`, and `renderToolbar` were removed from the public API until implemented.
 
 ---
 
@@ -220,18 +301,11 @@ Columns extend TanStack `ColumnDef` with DataGrid helpers:
 
 ```ts
 type DataGridColumnDef<TData> = ColumnDef<TData> & {
-  id?: string;
-  header?: string | ReactNode;
-  cell?: (props: {
-    row: { original: TData };
-    getValue: () => unknown;
-  }) => ReactNode;
-  size?: number;
-  minSize?: number;
-  maxSize?: number;
   sortable?: boolean;      // default: true (unless set to false)
   filterable?: boolean;    // opt out of column filter when grid filterable
   filterType?: 'string' | 'number' | 'boolean';
+  pin?: 'left' | 'right';  // initial sticky pin
+  enableResizing?: boolean; // default true when grid resizable
 };
 ```
 
@@ -266,6 +340,63 @@ const columns: DataGridColumnDef<Product>[] = [
   },
 ];
 ```
+
+---
+
+## Column resizing
+
+Resizing is **on by default** (`resizable`, default `true`) via TanStack column sizing.
+
+```tsx
+<DataGrid
+  data={rows}
+  columns={columns}
+  resizable
+  onColumnSizingChange={(sizing) => console.log(sizing)}
+/>
+```
+
+- Drag the column separator (`role="separator"`) to resize
+- Opt out per column with `enableResizing: false`
+- Disable globally with `resizable={false}`
+- Sizes persist when `persistenceKey` is set
+
+---
+
+## Column reordering
+
+Enable drag-and-drop header reordering with `@dnd-kit` (`reorderable`, default `false`):
+
+```tsx
+<DataGrid
+  data={rows}
+  columns={columns}
+  reorderable
+  onColumnOrderChange={(order) => console.log(order)}
+/>
+```
+
+- Use the **⠿** handle in the header (keeps sorting clicks separate)
+- System columns (`selection`, `row-actions`) stay fixed
+- Order persists when `persistenceKey` is set
+
+---
+
+## Column pinning
+
+Pin columns left or right with sticky CSS. Set initial pin on the column definition:
+
+```tsx
+const columns = [
+  { accessorKey: 'name', header: 'Name', pin: 'left' as const },
+  { accessorKey: 'status', header: 'Status' },
+  { accessorKey: 'amount', header: 'Amount', pin: 'right' as const },
+];
+
+<DataGrid data={rows} columns={columns} stickyHeader />
+```
+
+Pin state is included in `persistenceKey` storage and can be observed via `onColumnPinningChange`.
 
 ---
 
@@ -339,7 +470,7 @@ For server-side filtering, set `manualFiltering` and drive `data` from your API 
 <DataGrid data={rows} columns={columns} pagination />
 ```
 
-Client mode pages the filtered/sorted row model. Page sizes: **10, 20, 50, 100**.
+Client mode pages the filtered / sorted row model. Page sizes: **10, 20, 50, 100**.
 
 ### Server pagination
 
@@ -527,10 +658,17 @@ Implement CSV / Excel / print in your app. Wire bulk or toolbar actions as neede
   persistenceKey="orders-grid"
   pagination
   filterable
+  resizable
+  reorderable
 />
 ```
 
-Persists sorting, column filters, column visibility, and pagination under keys prefixed with `sabik-datagrid-persistence:`. Storage access is SSR-safe (no `window` / `localStorage` during SSR).
+Persists the following under keys prefixed with `sabik-datagrid-persistence:`:
+
+- sorting, column filters, column visibility, pagination
+- **column order**, **column sizing**, **column pinning**
+
+Storage access is SSR-safe (no `window` / `localStorage` during SSR).
 
 ---
 
@@ -595,10 +733,10 @@ No. `onExport` is a callback so you control format, encoding, and delivery.
 Use the toolbar **Columns** menu (requires `toolbar`). The column `visible` flag is typed but not applied as initial state today.
 
 **Can I pin columns or edit cells?**  
-Not yet. Those features were removed from the public types until implemented.
+Pinning is supported via `pin: 'left' | 'right'` on columns. Cell editing is not implemented yet.
 
 **Why do I need `getRowId`?**  
-Selection, persistence, and refetch stability rely on stable ids. Index-based ids break when filtering/sorting changes order.
+Selection, persistence, and refetch stability rely on stable ids. Index-based ids break when filtering / sorting changes order.
 
 **Does virtualization work with pagination?**  
 Virtualization turns off the client pagination model. Use `manualPagination` + server data if you need both concepts.
@@ -614,13 +752,16 @@ Virtualization turns off the client pagination model. Use `manualPagination` + s
 **Fix:**
 
 1. Pack the library and install the tarball:
+
    ```bash
    npm run build
    npm pack
    cd your-app
    npm install file:../sabik-datagrid-1.1.1.tgz
    ```
+
 2. In Vite, dedupe React:
+
    ```ts
    // vite.config.ts
    export default defineConfig({
@@ -629,7 +770,9 @@ Virtualization turns off the client pagination model. Use `manualPagination` + s
      },
    });
    ```
+
 3. Confirm a single React path:
+
    ```bash
    npm ls react
    ```
@@ -683,6 +826,34 @@ import {
   type ColumnFilterType,
 } from 'sabik-datagrid';
 ```
+
+---
+
+## Roadmap
+
+Ship status for the public surface:
+
+- [x] Sorting
+- [x] Filtering
+- [x] Global Search
+- [x] Pagination
+- [x] Selection
+- [x] Virtualization
+- [x] Themes
+- [x] Toolbar
+- [x] Persistence
+- [x] Column Resize
+- [x] Column Reorder
+- [x] Column Pinning
+- [ ] Inline Editing
+- [ ] Keyboard Navigation
+- [ ] Copy / Paste
+- [ ] Tree Data
+- [ ] Grouping
+- [ ] Aggregation
+- [ ] Pivot Tables
+
+Contributions and feature requests are welcome via [GitHub Issues](https://github.com/sabikneta/sabik-datagrid/issues).
 
 ---
 

@@ -9,13 +9,14 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "test:e2e:ui": "playwright test --ui",
+    "capture:docs": "node ./scripts/capture-docs.mjs"
   },
   "dependencies": {
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-router-dom": "^7.18.1",
-    "sabik-datagrid": "file:../sabik-datagrid-1.1.1.tgz"
+    "sabik-datagrid": "file:../sabik-datagrid-1.1.2.tgz"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.1",

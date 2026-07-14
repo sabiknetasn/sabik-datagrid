@@ -17,6 +17,9 @@ export default defineConfig({
     'react/jsx-dev-runtime',
     '@tanstack/react-table',
     '@tanstack/react-virtual',
+    '@dnd-kit/core',
+    '@dnd-kit/sortable',
+    '@dnd-kit/utilities',
   ],
   outExtension({ format }) {
     return {

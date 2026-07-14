@@ -12,6 +12,9 @@ import type {
   VisibilityState,
   RowSelectionState,
   PaginationState,
+  ColumnOrderState,
+  ColumnSizingState,
+  ColumnPinningState,
 } from '@tanstack/react-table';
 import type {
   DataGridAppearance,
@@ -46,6 +49,9 @@ export function DataGridProvider({
     pageIndex: 0,
     pageSize: DATAGRID_CONSTANTS.DEFAULT_PAGE_SIZE,
   });
+  const orderPersist = usePersistence<ColumnOrderState>(persistenceKey, 'columnOrder', []);
+  const sizingPersist = usePersistence<ColumnSizingState>(persistenceKey, 'columnSizing', {});
+  const pinningPersist = usePersistence<ColumnPinningState>(persistenceKey, 'columnPinning', {});
 
   const [sorting, setSorting] = useState<SortingState>(() =>
     persistenceKey ? sortingPersist.load() : initialState?.sorting || []
@@ -68,6 +74,15 @@ export function DataGridProvider({
           pageSize: DATAGRID_CONSTANTS.DEFAULT_PAGE_SIZE,
         }
   );
+  const [columnOrder, setColumnOrder] = useState<ColumnOrderState>(() =>
+    persistenceKey ? orderPersist.load() : initialState?.columnOrder || []
+  );
+  const [columnSizing, setColumnSizing] = useState<ColumnSizingState>(() =>
+    persistenceKey ? sizingPersist.load() : initialState?.columnSizing || {}
+  );
+  const [columnPinning, setColumnPinning] = useState<ColumnPinningState>(() =>
+    persistenceKey ? pinningPersist.load() : initialState?.columnPinning || {}
+  );
   const [density, setDensity] = useState<Density>(densityProp ?? 'comfortable');
 
   useEffect(() => {
@@ -80,7 +95,19 @@ export function DataGridProvider({
     filterPersist.save(columnFilters);
     visibilityPersist.save(columnVisibility);
     paginationPersist.save(pagination);
-  }, [sorting, columnFilters, columnVisibility, pagination, persistenceKey]);
+    orderPersist.save(columnOrder);
+    sizingPersist.save(columnSizing);
+    pinningPersist.save(columnPinning);
+  }, [
+    sorting,
+    columnFilters,
+    columnVisibility,
+    pagination,
+    columnOrder,
+    columnSizing,
+    columnPinning,
+    persistenceKey,
+  ]);
 
   const themeStyle = useMemo(() => resolveThemeVars(theme), [theme]);
 
@@ -93,6 +120,9 @@ export function DataGridProvider({
         columnVisibility,
         rowSelection,
         pagination,
+        columnOrder,
+        columnSizing,
+        columnPinning,
       },
       setSorting: (s: SortingState) => setSorting(s),
       setColumnFilters: (f: ColumnFiltersState) => setColumnFilters(f),
@@ -100,6 +130,9 @@ export function DataGridProvider({
       setColumnVisibility: (v: VisibilityState) => setColumnVisibility(v),
       setRowSelection: (s: RowSelectionState) => setRowSelection(s),
       setPagination: (p: PaginationState) => setPagination(p),
+      setColumnOrder: (o: ColumnOrderState) => setColumnOrder(o),
+      setColumnSizing: (s: ColumnSizingState) => setColumnSizing(s),
+      setColumnPinning: (p: ColumnPinningState) => setColumnPinning(p),
       density,
       setDensity,
       appearance,
@@ -112,6 +145,9 @@ export function DataGridProvider({
       columnVisibility,
       rowSelection,
       pagination,
+      columnOrder,
+      columnSizing,
+      columnPinning,
       density,
       appearance,
       themeStyle,

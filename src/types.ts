@@ -1,6 +1,9 @@
 import {
   ColumnDef,
   ColumnFiltersState,
+  ColumnOrderState,
+  ColumnPinningState,
+  ColumnSizingState,
   PaginationState,
   RowSelectionState,
   SortingState,
@@ -15,6 +18,8 @@ export type RowPaddingPreset = 'compact' | 'comfortable' | 'spacious';
 export type RowPadding = RowPaddingPreset | { x: number; y: number };
 
 export type ColumnFilterType = 'string' | 'number' | 'boolean';
+
+export type ColumnPinPosition = 'left' | 'right';
 
 export interface DataGridThemeTokens {
   primary?: string;
@@ -48,13 +53,17 @@ export interface RowAction<TData> {
 
 /**
  * Column definition based on TanStack ColumnDef.
- * Extra fields control DataGrid filtering/sorting behavior.
+ * Extra fields control DataGrid filtering/sorting/pinning behavior.
  * Do not redeclare `cell`/`header` — that breaks TypeScript inference.
  */
 export type DataGridColumnDef<TData, TValue = unknown> = ColumnDef<TData, TValue> & {
   sortable?: boolean;
   filterable?: boolean;
   filterType?: ColumnFilterType;
+  /** Initial pin side. Persisted when `persistenceKey` is set. */
+  pin?: ColumnPinPosition;
+  /** Opt out of resizing for this column when grid `resizable` is on. */
+  enableResizing?: boolean;
 };
 
 export interface DataGridState {
@@ -64,6 +73,9 @@ export interface DataGridState {
   columnVisibility: VisibilityState;
   rowSelection: RowSelectionState;
   pagination: PaginationState;
+  columnOrder: ColumnOrderState;
+  columnSizing: ColumnSizingState;
+  columnPinning: ColumnPinningState;
 }
 
 export interface DataGridContextValue {
@@ -74,6 +86,9 @@ export interface DataGridContextValue {
   setColumnVisibility: (visibility: VisibilityState) => void;
   setRowSelection: (selection: RowSelectionState) => void;
   setPagination: (pagination: PaginationState) => void;
+  setColumnOrder: (order: ColumnOrderState) => void;
+  setColumnSizing: (sizing: ColumnSizingState) => void;
+  setColumnPinning: (pinning: ColumnPinningState) => void;
   density: Density;
   setDensity: (density: Density) => void;
   appearance: DataGridAppearance;
@@ -99,6 +114,10 @@ export interface DataGridProps<TData> {
   virtualized?: boolean;
   /** Scroll viewport height in px when `virtualized` is enabled (default 400). */
   virtualHeight?: number;
+  /** Enable drag handles to resize columns (default `true`). */
+  resizable?: boolean;
+  /** Enable drag-and-drop header reordering via @dnd-kit (default `false`). */
+  reorderable?: boolean;
   persistenceKey?: string;
   striped?: boolean;
   hoverable?: boolean;
@@ -127,6 +146,9 @@ export interface DataGridProps<TData> {
   onSortChange?: (sorting: SortingState) => void;
   onFilterChange?: (filters: ColumnFiltersState, globalFilter: string) => void;
   onPaginationChange?: (pagination: PaginationState) => void;
+  onColumnOrderChange?: (order: ColumnOrderState) => void;
+  onColumnSizingChange?: (sizing: ColumnSizingState) => void;
+  onColumnPinningChange?: (pinning: ColumnPinningState) => void;
   onExport?: (type: 'csv' | 'excel' | 'print') => void;
 
   className?: string;

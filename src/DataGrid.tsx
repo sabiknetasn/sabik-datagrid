@@ -12,6 +12,7 @@ import {
   getSortedRowModel,
   getFilteredRowModel,
   type ColumnDef,
+  type ColumnPinningState,
   type FilterFn,
 } from '@tanstack/react-table';
 import { DataGridProvider, useDataGridContext } from './DataGridProvider';
@@ -28,6 +29,15 @@ import { DataGridBulkToolbar } from './DataGridBulkToolbar';
 import { DataGridSkeleton } from './DataGridSkeleton';
 import { DataGridRowActions } from './DataGridRowActions';
 import { COLUMN_FILTER_FNS, getFilterFnName, resolveRowPaddingVars } from './constants';
+import { buildInitialColumnPinning, isSystemColumnId } from './utils/columnLayout';
+
+function getColumnId<TData>(col: DataGridColumnDef<TData>, index: number): string {
+  if (col.id) return col.id;
+  if ('accessorKey' in col && col.accessorKey != null) {
+    return String(col.accessorKey);
+  }
+  return `col_${index}`;
+}
 
 function DataGridCore<TData>({
   data,
@@ -46,6 +56,8 @@ function DataGridCore<TData>({
   stickyHeader,
   virtualized,
   virtualHeight = 400,
+  resizable = true,
+  reorderable = false,
   manualPagination,
   manualSorting,
   manualFiltering,
@@ -58,6 +70,9 @@ function DataGridCore<TData>({
   onSortChange,
   onFilterChange,
   onPaginationChange,
+  onColumnOrderChange,
+  onColumnSizingChange,
+  onColumnPinningChange,
   onExport,
   className,
   ariaLabel,
@@ -74,6 +89,9 @@ function DataGridCore<TData>({
     setColumnVisibility,
     setRowSelection,
     setPagination,
+    setColumnOrder,
+    setColumnSizing,
+    setColumnPinning,
     density,
     themeStyle,
     appearance,
@@ -95,19 +113,22 @@ function DataGridCore<TData>({
   }, [isFullscreen]);
 
   const columns = useMemo((): ColumnDef<TData, unknown>[] => {
-    const enriched = baseColumns.map((col): ColumnDef<TData, unknown> => {
+    const enriched = baseColumns.map((col, index): ColumnDef<TData, unknown> => {
       const def = col as DataGridColumnDef<TData>;
+      const id = getColumnId(def, index);
       const filterType = def.filterType ?? 'string';
       const enableFilter =
-        Boolean(filterable) && def.filterable !== false && def.id !== 'selection';
+        Boolean(filterable) && def.filterable !== false && !isSystemColumnId(id);
       const filterFn: FilterFn<TData> | undefined = enableFilter
         ? (COLUMN_FILTER_FNS[getFilterFnName(filterType)] as FilterFn<TData>)
         : undefined;
 
       return {
         ...def,
+        id,
         enableSorting: def.sortable !== false,
         enableColumnFilter: enableFilter,
+        enableResizing: def.enableResizing !== false,
         filterFn,
       };
     });
@@ -119,6 +140,7 @@ function DataGridCore<TData>({
             enableColumnFilter: false,
             enableSorting: false,
             enableHiding: false,
+            enableResizing: false,
             header: ({ table }) => (
               <input
                 type="checkbox"
@@ -141,6 +163,8 @@ function DataGridCore<TData>({
               />
             ),
             size: 40,
+            minSize: 40,
+            maxSize: 48,
           },
           ...enriched,
         ]
@@ -154,13 +178,53 @@ function DataGridCore<TData>({
       enableColumnFilter: false,
       enableSorting: false,
       enableHiding: false,
+      enableResizing: false,
       header: () => <span className="sdg__visually-hidden">Actions</span>,
       cell: ({ row }) => <DataGridRowActions row={row} actions={actions} />,
       size: 56,
+      minSize: 48,
+      maxSize: 72,
     };
 
     return [...withSelection, actionsColumn];
   }, [baseColumns, selectable, filterable, rowActions]);
+
+  // Seed order / pinning once columns are known (keep persisted values when present).
+  useEffect(() => {
+    const ids = columns.map((c) => String(c.id));
+    if (!state.columnOrder.length) {
+      setColumnOrder(ids);
+    } else {
+      const missing = ids.filter((id) => !state.columnOrder.includes(id));
+      const pruned = state.columnOrder.filter((id) => ids.includes(id));
+      if (missing.length || pruned.length !== state.columnOrder.length) {
+        setColumnOrder([...pruned, ...missing]);
+      }
+    }
+
+    const hasPersistedPin =
+      (state.columnPinning.left?.length ?? 0) > 0 ||
+      (state.columnPinning.right?.length ?? 0) > 0;
+    if (!hasPersistedPin) {
+      const fromDefs = buildInitialColumnPinning(
+        baseColumns.map((col, index) => ({
+          id: getColumnId(col, index),
+          pin: col.pin,
+        }))
+      );
+      const next: ColumnPinningState = {
+        left: selectable ? ['selection', ...(fromDefs.left ?? [])] : fromDefs.left,
+        right: rowActions?.length
+          ? [...(fromDefs.right ?? []), 'row-actions']
+          : fromDefs.right,
+      };
+      if ((next.left?.length ?? 0) > 0 || (next.right?.length ?? 0) > 0) {
+        setColumnPinning(next);
+      }
+    }
+    // Intentionally seed from column identity, not every state tick.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [columns, selectable, rowActions, baseColumns]);
 
   const table = useReactTable({
     data,
@@ -169,6 +233,13 @@ function DataGridCore<TData>({
     getRowId,
     pageCount,
     rowCount,
+    columnResizeMode: 'onChange',
+    enableColumnResizing: resizable,
+    defaultColumn: {
+      minSize: 60,
+      size: 150,
+      maxSize: 560,
+    },
     state: {
       sorting: state.sorting,
       columnFilters: state.columnFilters,
@@ -176,6 +247,9 @@ function DataGridCore<TData>({
       columnVisibility: state.columnVisibility,
       rowSelection: state.rowSelection,
       pagination: state.pagination,
+      columnOrder: state.columnOrder,
+      columnSizing: state.columnSizing,
+      columnPinning: state.columnPinning,
     },
     onSortingChange: (updater) => {
       const next = typeof updater === 'function' ? updater(state.sorting) : updater;
@@ -205,6 +279,21 @@ function DataGridCore<TData>({
       const next = typeof updater === 'function' ? updater(state.pagination) : updater;
       setPagination(next);
       onPaginationChange?.(next);
+    },
+    onColumnOrderChange: (updater) => {
+      const next = typeof updater === 'function' ? updater(state.columnOrder) : updater;
+      setColumnOrder(next);
+      onColumnOrderChange?.(next);
+    },
+    onColumnSizingChange: (updater) => {
+      const next = typeof updater === 'function' ? updater(state.columnSizing) : updater;
+      setColumnSizing(next);
+      onColumnSizingChange?.(next);
+    },
+    onColumnPinningChange: (updater) => {
+      const next = typeof updater === 'function' ? updater(state.columnPinning) : updater;
+      setColumnPinning(next);
+      onColumnPinningChange?.(next);
     },
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: virtualized ? undefined : getPaginationRowModel(),
@@ -240,6 +329,8 @@ function DataGridCore<TData>({
   }
 
   if (data.length === 0) return <DataGridEmpty customEmptyState={emptyState} />;
+
+  const tableWidth = table.getCenterTotalSize() + table.getLeftTotalSize() + table.getRightTotalSize();
 
   return (
     <div
@@ -308,8 +399,19 @@ function DataGridCore<TData>({
             )}
           </div>
         ) : null}
-        <table className="sdg__table" aria-label={ariaLabel || 'Data grid'} aria-busy={softLoading || undefined}>
-          <DataGridHeader table={table} filterable={filterable} stickyHeader={stickyHeader} />
+        <table
+          className="sdg__table"
+          style={{ width: tableWidth }}
+          aria-label={ariaLabel || 'Data grid'}
+          aria-busy={softLoading || undefined}
+        >
+          <DataGridHeader
+            table={table}
+            filterable={filterable}
+            stickyHeader={stickyHeader}
+            resizable={resizable}
+            reorderable={reorderable}
+          />
           {virtualized ? (
             <DataGridBodyVirtual
               table={table}

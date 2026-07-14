@@ -52,6 +52,7 @@ export function ProductsPage() {
         header: 'Product',
         size: 280,
         filterType: 'string',
+        pin: 'left',
         cell: ({ row }: CellProps<Product>) => (
           <div className="cell-product">
             <span className={`swatch swatch--${row.original.category.toLowerCase()}`} />
@@ -141,9 +142,10 @@ export function ProductsPage() {
         description="Catalog browsing with global search, typed column filters, boolean feature flags, and rich price/inventory rendering."
         features={[
           'Search',
-          'Column filters',
-          'Pagination',
-          'Typed filters',
+          'Resize',
+          'Reorder',
+          'Pin left',
+          'Filters',
           'Loading / empty / error',
         ]}
         actions={<DemoStateControls mode={mode} onChange={setMode} />}
@@ -160,9 +162,13 @@ export function ProductsPage() {
           filterable
           pagination
           toolbar
+          resizable
+          reorderable
+          stickyHeader
           striped
           hoverable
           density="comfortable"
+          persistenceKey="consumer-products-layout"
           ariaLabel="Product catalog"
           loading={loading}
           error={error}
